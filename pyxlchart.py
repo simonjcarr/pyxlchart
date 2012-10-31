@@ -39,23 +39,46 @@ class Pyxlchart(object):
         excel.Visible = False
         wb = excel.Workbooks.Open(os.path.join(self.WorkbookDirectory ,self.WorkbookFilename))
         self._get_Charts_In_Worksheet(wb,self.SheetName,self.ChartName)
-        if self.GetAllworkbooks = True:
+        
+            
             
         wb.Close(False)
         excel.Quit()
 
 
-    def _get_Charts_In_Worksheet(self,wb,worksheet = "", chartname = "")
-        if worksheet = "":
-            for sht in wb.WorkSheets:
-        else:
-            for sht in wb.WorkSheets(worksheet):
+    def _get_Charts_In_Worksheet(self,wb,worksheet = "", chartname = ""):
+        
+        if worksheet != "" and chartname != "":
+            sht = self._change_sheet(wb,worksheet)
+            cht = sht.ChartObjects(chartname)
+            self._save_chart(cht)
+            return
+
+        if worksheet == "":
+            for sht in wb.Worksheets:
                 for cht in sht.ChartObjects():
-                    if chartname = "":
+                    if chartname == "":
                         self._save_chart(cht)
                     else:
-                        if chartname = cht.Name:
+                        if chartname == cht.Name:
                             self._save_chart(cht)
+        else:
+            sht = wb.Worksheets(worksheet)
+            for cht in sht.ChartObjects():
+                if chartname == "":
+                    self._save_chart(cht)
+                else:
+                    if chartname == cht.Name:
+                        self._save_chart(cht)
+
+
+
+    def _change_sheet(self,wb,worksheet):
+        try:
+            return wb.Worksheets(worksheet)
+        except:
+            raise NameError('Unable to Select Sheet: ' + worksheet + ' in Workbook: ' + wb.Name)
+        
 
 
     def _save_chart(self,chartObject):
@@ -65,7 +88,7 @@ class Pyxlchart(object):
         chartObject.Chart.Export(savepath,self.ImageType)
 
 
-
+    
 
     def _get_filename(self,chartname):
         """
@@ -90,10 +113,12 @@ if __name__ == "__main__":
     xl = Pyxlchart()
     xl.WorkbookDirectory = "C:\\Users\\Simon\\Documents\\pychart"
     xl.WorkbookFilename = "testworkbook.xls"
-    xl.SheetName = "Sheet1"
+    xl.SheetName = "Sheet5"
     xl.ImageFilename = "MyChart1"
     xl.ExportPath = "C:\\Users\\Simon\\Documents\\pychart"
+    xl.ChartName = "Chart 1"
     xl.start_export()
+    
     print "This file does not currently allow direct access"
     print "Please import PyXLChart and run start_export()"
     
