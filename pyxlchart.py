@@ -1,4 +1,5 @@
 from win32com.client import Dispatch
+from win32com.client import Dispatch
 import os
 import pythoncom
 pythoncom.CoInitialize
@@ -37,16 +38,34 @@ class Pyxlchart(object):
         excel = Dispatch("excel.application")
         excel.Visible = False
         wb = excel.Workbooks.Open(os.path.join(self.WorkbookDirectory ,self.WorkbookFilename))
-        for sht in wb.WorkSheets:
-            for cht in sht.ChartObjects():
-                imagename = self._get_filename(cht.Name)
-                savepath = os.path.join(self.ExportPath,imagename)
-                print savepath
-                cht.Chart.Export(savepath,self.ImageType)
+        self._get_Charts_In_Worksheet(wb,self.SheetName,self.ChartName)
+        if self.GetAllworkbooks = True:
+            
         wb.Close(False)
         excel.Quit()
 
-    
+
+    def _get_Charts_In_Worksheet(self,wb,worksheet = "", chartname = "")
+        if worksheet = "":
+            for sht in wb.WorkSheets:
+        else:
+            for sht in wb.WorkSheets(worksheet):
+                for cht in sht.ChartObjects():
+                    if chartname = "":
+                        self._save_chart(cht)
+                    else:
+                        if chartname = cht.Name:
+                            self._save_chart(cht)
+
+
+    def _save_chart(self,chartObject):
+        imagename = self._get_filename(chartObject.Name)
+        savepath = os.path.join(self.ExportPath,imagename)
+        print savepath
+        chartObject.Chart.Export(savepath,self.ImageType)
+
+
+
 
     def _get_filename(self,chartname):
         """
