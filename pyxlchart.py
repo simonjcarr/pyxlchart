@@ -1,8 +1,7 @@
 from win32com.client import Dispatch
-from win32com.client import Dispatch
 import os
 import pythoncom
-pythoncom.CoInitialize
+
 
 
 class Pyxlchart(object):
@@ -13,6 +12,7 @@ class Pyxlchart(object):
     
 
     def __init__(self):
+        pythoncom.CoInitialize()
         self.WorkbookDirectory = ''
         self.WorkbookFilename = ''
         self.GetAllWorkbooks = False
@@ -25,6 +25,8 @@ class Pyxlchart(object):
         self.ReplaceWhiteSpaceChar = '_'
         self.ImageType = 'jpg'
 
+    def __del__(self):
+        pass
     def start_export(self):
         if self.WorkbookDirectory == '':
             return "WorkbookDirectory not set"
@@ -39,9 +41,6 @@ class Pyxlchart(object):
         excel.Visible = False
         wb = excel.Workbooks.Open(os.path.join(self.WorkbookDirectory ,self.WorkbookFilename))
         self._get_Charts_In_Worksheet(wb,self.SheetName,self.ChartName)
-        
-            
-            
         wb.Close(False)
         excel.Quit()
 
@@ -111,12 +110,12 @@ class Pyxlchart(object):
 
 if __name__ == "__main__":
     xl = Pyxlchart()
-    xl.WorkbookDirectory = "C:\\Users\\Simon\\Documents\\pychart"
-    xl.WorkbookFilename = "testworkbook.xls"
-    xl.SheetName = "Sheet5"
+    xl.WorkbookDirectory = "\\\\maawtns01\\discipline\\procurement\\MATERIEL\\Raw Material\\Data Management\\Hawk"
+    xl.WorkbookFilename = "Hawk Workability KPI.xlsm"
+    xl.SheetName = ""
     xl.ImageFilename = "MyChart1"
-    xl.ExportPath = "C:\\Users\\Simon\\Documents\\pychart"
-    xl.ChartName = "Chart 1"
+    xl.ExportPath = "d:\\pycharts"
+    xl.ChartName = ""
     xl.start_export()
     
     print "This file does not currently allow direct access"
